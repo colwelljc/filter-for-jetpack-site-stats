@@ -1,0 +1,52 @@
+/* General */
+#postviews {
+	max-width: inherit;
+}
+
+.jetpack-site-stats-filter {
+	margin-top: 2em;
+}
+.jetpack-site-stats-filter select {
+	width: 30%;
+}
+.jetpack-site-stats-filter .button {
+	float: right;
+}
+
+
+/* Mobile */
+@media screen and (max-width:782px) {
+	.jetpack-site-stats-filter select,
+	.jetpack-site-stats-filter .button {
+		display: block;
+		margin: 0 auto .5em auto;
+	}
+	.jetpack-site-stats-filter select {
+		width: 100%;
+		max-width: 100%;
+	}
+	.jetpack-site-stats-filter .button {
+		float: none;
+	}
+}
+
+/* Startup animation */
+@keyframes pulse {
+	from { opacity: .3; }
+	to   { opacity: .6; }
+}
+.jetpack-site-stats-filter.jssf-busy {
+	animation: pulse .3s linear infinite alternate;
+}
+
+
+/* Show/hide post rows */
+.staticmetabox .jssf-filter-row,
+.jssf-filtering .jssf-filter-row.selected {
+	display: none;
+}
+.jssf-filter-row.selected {
+	display: table-row;
+}
+
+
