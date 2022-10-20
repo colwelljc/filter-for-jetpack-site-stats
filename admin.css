@@ -50,3 +50,11 @@
 }
 
 
+
+/* Highlight selected filter */
+.jetpack-site-stats-filter select.jssf-highlight {
+	background-color: #ecf7ff;
+	font-weight: bold;
+}
+
+
