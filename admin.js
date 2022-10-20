@@ -45,8 +45,8 @@ waitFor( '.staticmetabox' ).then( ( el ) => {
 		const statsLink = row.querySelector( '.more > a' );
 
 		if ( statsLink ) {
-			const params    = new URLSearchParams( statsLink.href.split( '?' )[ 1 ] );
-			const postID    = params.get( 'post' );
+			const params = new URLSearchParams( statsLink.href.split( '?' )[ 1 ] );
+			const postID = params.get( 'post' );
 
 			postIDs.push( postID );
 		}
@@ -66,6 +66,9 @@ waitFor( '.staticmetabox' ).then( ( el ) => {
 	);
 
 	let jetpackSiteStatsFilter = document.querySelector( '.jetpack-site-stats-filter' );
+	let resetButton            = jetpackSiteStatsFilter.querySelector( '.reset' );
+
+	resetButton.setAttribute( 'disabled', 'disabled' );
 
 	let selectCategory = jetpackSiteStatsFilter.querySelector( '.category' ),
 	    selectTag      = jetpackSiteStatsFilter.querySelector( '.tag' ),
@@ -135,44 +138,60 @@ waitFor( '.staticmetabox' ).then( ( el ) => {
 		/**
 		 * Filter rows of top posts/pages on change of the select.
 		 */
-		let postRowsContainer = rowTable.parentNode;
+		let postRowsContainer = jetpackSiteStatsFilter.nextElementSibling.querySelector( 'tbody' );
 
 		function filterPostsAndSelectors() {
 
-			// Hide all while working.
 			postRowsContainer.classList.add( 'jssf-filtering' );
 
-			rowTable.style.display    = 'none';
-			rowPostview.style.display = 'none';
+			if ( rowTable ) {
+				rowTable.style.display    = 'none';
+				rowPostview.style.display = 'none';
 
-			// Reset the "+/-" twistie on the "Home page / Archives" row.
-			rowPostview.classList.remove( 'peekaboo' );
+				rowPostview.classList.remove( 'peekaboo' );  // Resets the "+/-" twistie on the "Home page / Archives" row.
+			}
 
 			let rowsToShow = rows;
 
-			// Clear out any prior selections.
-			rowsToShow.forEach( row => row.classList.remove( 'selected' ) );
+			// Clear selection and zebra striping.
+			rowsToShow.forEach( row => row.classList.remove( 'selected', 'alternate' ) );
+			resetButton.removeAttribute( 'disabled' );
 
-			// Remove any rows not matching the filter selections.
+			selectCategory.classList.remove( 'jssf-highlight' );
+			selectTag.classList.remove( 'jssf-highlight' );
+			selectAuthor.classList.remove( 'jssf-highlight' );
+
 			if ( selectCategory.value !== 'all' ) {
 				rowsToShow = [ ...rowsToShow ].filter( row => row.matches( `.${ selectCategory.value }` ) );
+				selectCategory.classList.add( 'jssf-highlight' );
 			}
 			if ( selectTag.value !== 'all' ) {
 				rowsToShow = [ ...rowsToShow ].filter( row => row.matches( `.${ selectTag.value }` ) );
+				selectTag.classList.add( 'jssf-highlight' );
 			}
 			if ( selectAuthor.value !== 'all' ) {
 				rowsToShow = [ ...rowsToShow ].filter( row => row.matches( `.${ selectAuthor.value }` ) );
+				selectAuthor.classList.add( 'jssf-highlight' );
 			}
 
-			// Restore the "Home page / Archives" row if showing all.
-			if ( selectCategory.value === 'all' && selectTag.value === 'all' && selectAuthor.value === 'all' ) {
+			if ( rowPostview && selectCategory.value === 'all' && selectTag.value === 'all' && selectAuthor.value === 'all' ) {
 				rowPostview.style.display = 'table-row';
+				resetButton.setAttribute( 'disabled', 'disabled' );
 			}
 
-			// Mark remaining rows as having been selected.
 			rowsToShow.forEach( row => row.classList.add( 'selected' ) );
 
-			// Unveil.
+
+			/**
+			 * Update zebra striping.
+			 */
+			[ ...rowsToShow ].forEach( ( row, i) => {
+				if ( ( i % 2 ) !== 0 ) {
+					row.classList.add( 'alternate' );
+				}
+			} );
+
+
 			postRowsContainer.classList.remove( 'jssf-filtering' );
 
 
@@ -189,7 +208,7 @@ waitFor( '.staticmetabox' ).then( ( el ) => {
 				thisRowClasses.forEach( thisRowClass => classesVisibleRows[ thisRowClass ] = 1 );
 			} );
 
-			// Grab the user's current selections and remove all options.
+			// Grab the user's current selections and then remove all options.
 			const selectedCategory = selectCategory.value,
 			      selectedTag      = selectTag.value,
 			      selectedAuthor   = selectAuthor.value;
@@ -217,7 +236,7 @@ waitFor( '.staticmetabox' ).then( ( el ) => {
 		/**
 		 * Reset all selects upon request.
 		 */
-		jetpackSiteStatsFilter.querySelector( '.reset' ).addEventListener( 'click', () => {
+		resetButton.addEventListener( 'click', () => {
 			selectCategory.value = 'all';
 			selectTag.value = 'all';
 			selectAuthor.value = 'all';
