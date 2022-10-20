@@ -2,7 +2,8 @@
 /**
  * Plugin Name: Filter for Jetpack Site Stats
  * Description: Enables admins to filter "Top Posts & Pages" summaries by metadata.
- * Version: 1.0
+ * Version: 1.0.2
+ * Requires PHP: 7.4
  * Author: Chris Colwell
  * Author URI: https://jchriscolwell.com/
  * License: GPLv2 or later
